@@ -1,7 +1,8 @@
 package com.example.javaPergunta.domain.model;
 
 public interface Account {
-    String getAccountNumnber();
+    String getId();
+
     double getBalance();
     void deposit(double amount);
     void withdraw(double amount);
