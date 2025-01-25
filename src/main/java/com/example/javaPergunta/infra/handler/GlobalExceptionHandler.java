@@ -1,6 +1,7 @@
 package com.example.javaPergunta.infra.handler;
 
 
+import com.example.javaPergunta.domain.exceptions.NotFoundException;
 import com.example.javaPergunta.rest.endpoints.resources.ErrorResource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.NoSuchElementException;

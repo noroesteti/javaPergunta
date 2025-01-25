@@ -1,10 +1,11 @@
 package com.example.javaPergunta.service;
 
+import com.example.javaPergunta.domain.exceptions.NotFoundException;
 import com.example.javaPergunta.domain.model.Account;
 import com.example.javaPergunta.domain.model.SavingsAccount;
 import com.example.javaPergunta.rest.endpoints.resources.AccountResource;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
+
 
 import java.util.Map;
 import java.util.NoSuchElementException;
