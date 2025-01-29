@@ -2,12 +2,14 @@ package com.example.javaPergunta;
 
 import com.example.javaPergunta.domain.model.Account;
 import com.example.javaPergunta.domain.model.SavingsAccount;
+import com.example.javaPergunta.domain.valueobject.Money;
 import com.example.javaPergunta.rest.endpoints.resources.AccountResource;
 import com.example.javaPergunta.service.AccountService;
 import com.example.javaPergunta.service.AccountServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,55 +36,75 @@ public class AccountServiceTest {
         assertNotNull(account);
         assertNotNull(account2);
 
-        account.deposit(10);
-        account2.deposit(20);
+        account.deposit(new Money(new BigDecimal("10.00")));
+        account2.deposit(new Money(new BigDecimal("20.00")));
 
         List<Account> accounts = Arrays.asList(
-             new SavingsAccount("55555", 11),
-             new SavingsAccount("66666", 20)
+             new SavingsAccount("55555"),
+             new SavingsAccount("66666")
         );
 
+        for (Account account1 : accounts) {
+            System.out.println(account1.getId() + " - " + account1.getBalance());
+        }
+
         List<String> accountsFilered = accounts.stream()
-                .filter(p -> p.getBalance() > 10)
+                .filter(p -> p.getBalance().isGreaterThan(new Money(new BigDecimal("11.00"))))
                 .sorted((p1, p2) -> p1.getId().compareTo(p2.getId()))
                 .map(Account::getId)
                 .collect(Collectors.toList());
 
-        accountsFilered.forEach(System.out::println);
+       // accountsFilered.forEach(System.out::println);
+
+        for (String s : accountsFilered) {
+            System.out.println(s.toString());
+
+        }
 
     }
 
+//
+//    @BeforeEach
+//    void setup() {
+//        accountService.createSavingsAccount("12345");
+//    }
+//
 //    @Test
 //    void testCreateSavingsAccount() {
-//        Account account = accountService.createSavingsAccount("12345");
+//        Account account = accountService.createSavingsAccount("67890");
 //        assertNotNull(account);
-//        assertEquals("12345", account.getAccountNumber());
+//        assertEquals("67890", account.getId());
+//        assertNotNull(account.getCreatedDate());
 //    }
 //
 //    @Test
 //    void testDeposit() {
-//        accountService.createSavingsAccount("12345");
-//        accountService.deposit("12345", 100.0);
-//        assertEquals(100.0, accountService.getAccount("12345").getBalance());
+//        accountService.deposit("12345", new Money(500));
+//        Account account = accountService.getAccount("12345");
+//        assertEquals(500, account.getBalance().getAmount());
 //    }
 //
 //    @Test
 //    void testWithdraw() {
-//        accountService.createSavingsAccount("12345");
-//        accountService.deposit("12345", 100.0);
-//        accountService.withdraw("12345", 50.0);
-//        assertEquals(50.0, accountService.getAccount("12345").getBalance());
+//        accountService.deposit("12345", new Money(500));
+//        accountService.withdraw("12345", new Money(200));
+//        Account account = accountService.getAccount("12345");
+//        assertEquals(300, account.getBalance().getAmount());
 //    }
 //
 //    @Test
-//    void testWithdrawInsufficientFunds() {
-//        accountService.createSavingsAccount("12345");
-//        assertThrows(IllegalArgumentException.class, () -> accountService.withdraw("12345", 50.0));
+//    void testInsufficientBalance() {
+//        accountService.deposit("12345", new Money(100));
+//        assertThrows(IllegalArgumentException.class, () -> accountService.withdraw("12345", new Money(200)));
 //    }
 //
 //    @Test
-//    void testInvalidDepositAmount() {
-//        accountService.createSavingsAccount("12345");
-//        assertThrows(IllegalArgumentException.class, () -> accountService.deposit("12345", -10.0));
+//    void testAccountNotFound() {
+//        assertThrows(IllegalArgumentException.class, () -> accountService.getAccount("99999"));
+//    }
+//
+//    @Test
+//    void testDuplicateAccountCreation() {
+//        assertThrows(IllegalArgumentException.class, () -> accountService.createSavingsAccount("12345"));
 //    }
 }

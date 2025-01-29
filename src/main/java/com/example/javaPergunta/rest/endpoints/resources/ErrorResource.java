@@ -2,8 +2,7 @@ package com.example.javaPergunta.rest.endpoints.resources;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.time.LocalDate;
-
+import java.time.Instant;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 @JsonInclude(NON_EMPTY)
@@ -14,7 +13,7 @@ public class ErrorResource {
     protected String title;
     protected String detail;
     protected String path;
-    protected LocalDate timestamp;
+    protected Instant timestamp;
 
     public static class ErrorResponseBuilder {
 
@@ -49,7 +48,7 @@ public class ErrorResource {
             return this;
         }
 
-        public ErrorResponseBuilder withTimesTamp(LocalDate timesTamp) {
+        public ErrorResponseBuilder withTimesTamp(Instant timesTamp) {
             this.instance.timestamp = timesTamp;
             return this;
         }
@@ -79,7 +78,7 @@ public class ErrorResource {
         return path;
     }
 
-    public LocalDate getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 }

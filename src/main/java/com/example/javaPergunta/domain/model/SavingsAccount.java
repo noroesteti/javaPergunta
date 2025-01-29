@@ -1,17 +1,24 @@
 package com.example.javaPergunta.domain.model;
 
+import com.example.javaPergunta.domain.valueobject.DateClass;
+import com.example.javaPergunta.domain.valueobject.Money;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+
 public class SavingsAccount implements Account{
+
+    @Schema(name = "Account ID", example = "1", required = true, description = "This is the Account Number")
     private final String id;
-    private double balance;
+    private Money balance;
+    private final Instant createdDate;
     private final Object lock = new Object();
 
     public SavingsAccount(String id) {
         this.id = id;
-        this.balance = 0.0;
-    }
-    public SavingsAccount(String id, double amount){
-        this.id = id;
-        this.balance = amount;
+        this.balance = new Money(new BigDecimal("00.00"));
+        this.createdDate = new DateClass().getDateTime();
     }
 
     @Override
@@ -19,35 +26,28 @@ public class SavingsAccount implements Account{
         return this.id;
     }
     @Override
-    public double getBalance() {
+    public Money getBalance() {
         synchronized (lock) {
             return balance;
         }
     }
 
     @Override
-    public void deposit(double amount) {
-        validateAmount(amount);
+    public void deposit(Money amount) {
         synchronized (lock) {
-            balance += amount;
+            balance = balance.add(amount);
         }
     }
 
     @Override
-    public void withdraw(double amount) {
-        validateAmount(amount);
+    public void withdraw(Money amount) {
         synchronized (lock) {
-            if (balance >= amount) {
-                balance -= amount;
-            } else {
-                throw new IllegalArgumentException("Insufficient balance.");
-            }
+            balance = balance.subtract(amount);
         }
+    }
+    @Override
+    public Instant getCreatedDate(){
+        return createdDate;
     }
 
-    private void validateAmount(double amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Amount must be positive.");
-        }
-    }
 }
