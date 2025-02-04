@@ -25,22 +25,31 @@ import java.time.ZoneId;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
-    @Autowired
     private DateClass date;
-
     @ExceptionHandler(NotFoundException.class)
     public final ResponseEntity handlerNotFoundException(NotFoundException exception,
                                                                       HttpServletRequest request, WebRequest webRequest) {
         ErrorResource errorResource = problemBuilder(HttpStatus.NOT_FOUND, exception.getMessage(), request.getContextPath()).build();
-        LOGGER.info("Error occured, please take me out of here s%",date.getDateTime());
-        for(String s : ZoneId.getAvailableZoneIds()){
-            System.out.println(s);
-        }
-
+        LOGGER.info("Error occured - ",date.getDateTime());
         return handleExceptionInternal(exception, errorResource, new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public final ResponseEntity handlerIllegalStateException(IllegalStateException exception,
+                                                             HttpServletRequest request,
+                                                             WebRequest webRequest){
+        ErrorResource errorResource = problemBuilder(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), request.getContextPath()).build();
+        LOGGER.info("Error occured - ", date.getDateTime());
+        return handleExceptionInternal(exception, errorResource, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public final ResponseEntity handlerIllegalArgumentException(IllegalArgumentException exception,
+                                                                HttpServletRequest request,
+                                                                WebRequest webRequest){
+        ErrorResource errorResource = problemBuilder(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), request.getContextPath()).build();
+        return handleExceptionInternal(exception, errorResource, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
+    }
 
     private ErrorResource.ErrorResponseBuilder problemBuilder(HttpStatus status, String detail, String path) {
         return new ErrorResource.ErrorResponseBuilder()

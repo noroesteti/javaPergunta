@@ -1,5 +1,6 @@
 package com.example.javaPergunta.domain.model;
 
+import com.example.javaPergunta.domain.valueobject.AccountStatus;
 import com.example.javaPergunta.domain.valueobject.DateClass;
 import com.example.javaPergunta.domain.valueobject.Money;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,12 +14,15 @@ public class SavingsAccount implements Account{
     private final String id;
     private Money balance;
     private final Instant createdDate;
+
+    private AccountStatus accountStatus;
     private final Object lock = new Object();
 
     public SavingsAccount(String id) {
         this.id = id;
         this.balance = new Money(new BigDecimal("00.00"));
         this.createdDate = new DateClass().getDateTime();
+        this.accountStatus =AccountStatus.PENDING;
     }
 
     @Override
@@ -50,4 +54,13 @@ public class SavingsAccount implements Account{
         return createdDate;
     }
 
+    @Override
+    public String toString() {
+        return "SavingsAccount{" +
+                "id='" + id + '\'' +
+                ", balance=" + balance +
+                ", createdDate=" + createdDate +
+                ", lock=" + lock +
+                '}';
+    }
 }

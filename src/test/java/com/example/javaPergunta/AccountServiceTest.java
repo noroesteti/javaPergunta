@@ -10,8 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,9 +48,16 @@ public class AccountServiceTest {
         );
 
         for (Account account1 : accounts) {
-            System.out.println(account1.getId() + " - " + account1.getBalance());
+            //System.out.println(account1.getId() + " - " + account1.getBalance());
+            BigDecimal min = new BigDecimal("10.50"); // Lower bound
+            BigDecimal max = new BigDecimal("100.75"); // Upper bound
+            BigDecimal randomValue = generateRandomBigDecimal(min, max, 2);
+            account1.deposit(new Money(randomValue));
         }
+        for (Account s : accounts) {
+            System.out.println(s.toString());
 
+        }
         List<String> accountsFilered = accounts.stream()
                 .filter(p -> p.getBalance().isGreaterThan(new Money(new BigDecimal("11.00"))))
                 .sorted((p1, p2) -> p1.getId().compareTo(p2.getId()))
@@ -56,13 +66,15 @@ public class AccountServiceTest {
 
        // accountsFilered.forEach(System.out::println);
 
-        for (String s : accountsFilered) {
-            System.out.println(s.toString());
 
-        }
 
     }
 
+    public static BigDecimal generateRandomBigDecimal(BigDecimal min, BigDecimal max, int scale) {
+        BigDecimal randomBigDecimal = min.add(new BigDecimal(Math.random())
+                .multiply(max.subtract(min)));
+        return randomBigDecimal.setScale(scale, RoundingMode.HALF_UP);
+    }
 //
 //    @BeforeEach
 //    void setup() {

@@ -8,6 +8,8 @@ import java.math.RoundingMode;
 public class Money {
     private final BigDecimal amount;
 
+    public static final Money ZERO = new Money(BigDecimal.ZERO);
+
     public Money(BigDecimal amount){
         if(amount.compareTo(BigDecimal.ZERO) < 0){
             throw new ObjectCollectedException("Amount cannnot be negative");
