@@ -38,19 +38,17 @@ public class GoogleCloudConfig {
             throw new IllegalStateException("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set.");
         }
         try {
-
             GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(credentialPath));
             return StorageOptions.newBuilder()
                     .setCredentials(credentials)
                     .build()
                     .getService();
 
-        }catch (IOException | FileNotFoundException | java.io.FileNotFoundException e){
+        }catch (IOException | FileNotFoundException e){
             throw new IOException("Can't read file!");
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }

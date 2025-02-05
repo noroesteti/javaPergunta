@@ -1,14 +1,15 @@
 package com.example.javaPergunta.infra.handler;
 
 
+import com.example.javaPergunta.domain.exceptions.FileNotFoundException;
+import com.example.javaPergunta.domain.exceptions.IOException;
 import com.example.javaPergunta.domain.exceptions.NotFoundException;
 import com.example.javaPergunta.domain.valueobject.DateClass;
 import com.example.javaPergunta.rest.endpoints.resources.ErrorResource;
+import com.google.api.Http;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
-
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
@@ -41,6 +38,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         ErrorResource errorResource = problemBuilder(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), request.getContextPath()).build();
         LOGGER.info("Error occured - ", date.getDateTime());
         return handleExceptionInternal(exception, errorResource, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public final ResponseEntity handlerIOException(IOException exception,
+                                                   HttpServletRequest request,
+                                                   WebRequest webRequest){
+        ErrorResource errorResource = problemBuilder(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage(), request.getContextPath()).build();
+        LOGGER.info("ERROR occured - ", date.getDateTime());
+        return handleExceptionInternal(exception, errorResource, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, webRequest);
+    }
+    @ExceptionHandler(FileNotFoundException.class)
+    public final ResponseEntity handlerFileNotFoundException(FileNotFoundException exception,
+                                                             HttpServletRequest request,
+                                                             WebRequest webRequest){
+        ErrorResource errorResource = problemBuilder(HttpStatus.NOT_FOUND, exception.getMessage(), request.getContextPath()).build();
+        return handleExceptionInternal(exception, errorResource, new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
