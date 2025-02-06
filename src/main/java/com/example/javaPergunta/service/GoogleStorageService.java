@@ -1,13 +1,14 @@
 package com.example.javaPergunta.service;
 
-
 import com.example.javaPergunta.domain.exceptions.NotFoundException;
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
+import com.example.javaPergunta.infra.gcp.GoogleStorageClient;
+import com.example.javaPergunta.rest.endpoints.resources.StorageFile;
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.Storage;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -16,25 +17,32 @@ import static java.lang.String.format;
 
 @Service
 public class GoogleStorageService {
+    private final GoogleStorageClient googleStorageClient;
 
-    private final Storage storage;
-
-    public GoogleStorageService(Storage storage) {
-        this.storage = storage;
+    public GoogleStorageService(GoogleStorageClient googleStorageClient) {
+        this.googleStorageClient = googleStorageClient;
     }
 
-
-    public List<String> listBuckets() {
-        return StreamSupport.stream(storage.list().iterateAll().spliterator(), false)
-                .map(Bucket::getName)
-                .collect(Collectors.toList());
-    }
-
-    public byte[] douwloadFile(String bucketName, String filename){
-        Blob blob = storage.get(BlobId.of(bucketName, filename));
-        if (blob == null){
-            throw new NotFoundException(format("File %s not found!", filename));
+    public byte[] downloadFile(StorageFile file) {
+        byte[] content = googleStorageClient.downloadFile(file.getBucketName(), file.getFileName());
+        if (content == null) {
+            throw new NotFoundException(format("File %s not found!", file.getFileName()));
         }
-        return blob.getContent();
+        return content;
     }
+
+    public void uploadFile(StorageFile file) throws IOException {
+        // Convert MultipartFile to a temporary file
+        File tempFile = File.createTempFile("upload-", file.getFileName());
+        file.getFile().transferTo(tempFile);
+        Path path = tempFile.toPath();
+
+        // Upload file
+        googleStorageClient.uploadFile(file.getBucketName(), file.getFileName(), path);
+
+        // Delete temporary file after upload
+        tempFile.delete();
+    }
+
+
 }
