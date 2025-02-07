@@ -4,6 +4,7 @@ import com.example.javaPergunta.domain.exceptions.NotFoundException;
 import com.example.javaPergunta.domain.port.output.StorageServicePort;
 import com.example.javaPergunta.infra.gcp.GoogleStorageAdapter;
 import com.example.javaPergunta.rest.endpoints.resources.StorageFile;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,8 +16,8 @@ import static java.lang.String.format;
 public class StorageService {
     private final StorageServicePort storageServicePort;
 
-    public StorageService(GoogleStorageAdapter googleStorageAdapter) {
-        this.storageServicePort = googleStorageAdapter;
+    public StorageService(@Qualifier("localStorage")StorageServicePort storageServicePort) {
+        this.storageServicePort = storageServicePort;
     }
 
     public byte[] downloadFile(StorageFile file) {
@@ -27,13 +28,14 @@ public class StorageService {
         return content;
     }
 
+
     public void uploadFile(StorageFile file) throws IOException {
         // Upload file
         storageServicePort.uploadFile(file);
-
     }
 
     public List<String> listBuckets() {
         return storageServicePort.listBuckets();
     }
+
 }

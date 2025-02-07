@@ -11,10 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/storage")
-public class GoogleStorageController {
+public class StorageController {
     private final StorageService storageService;
 
-    public GoogleStorageController(StorageService storageService) {
+    public StorageController(StorageService storageService) {
         this.storageService = storageService;
     }
 
